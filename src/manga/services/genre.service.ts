@@ -1,11 +1,56 @@
 import { Injectable } from '@nestjs/common';
+import { AuthService } from 'src/browser/services/auth.service';
+import { BrowserService } from 'src/browser/services/browser.service';
+import * as cheerio from 'cheerio';
+import * as _ from 'lodash';
 
 @Injectable()
 export class GenreService {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly browserService: BrowserService,
+  ) {}
+
   /**
    * Scrap and sync genre
    */
   public async sync(): Promise<any> {
-    console.log('ok');
+    await this.authService.login();
+    const baseUrl = this.browserService.baseUrl;
+
+    const browser = await this.browserService.getWindow();
+    const page = await browser.newPage();
+
+    await page.goto(`${baseUrl}/manga_new`, {
+      waitUntil: 'networkidle0',
+    });
+
+    const genres = [];
+
+    try {
+      const form = await page.$eval(
+        '#manga_add_form',
+        element => element.innerHTML,
+      );
+
+      const $ = cheerio.load(form);
+      _.forEach($(`[id*='checkbox-tag-']`), value => {
+        const id = value.attribs.value;
+        const title = $(
+          `label[for='checkbox-tag-${value.attribs.value}']`,
+        ).text();
+
+        genres.push({
+          id,
+          title,
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      browser.close();
+    }
+
+    return genres;
   }
 }

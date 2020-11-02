@@ -1,3 +1,4 @@
+import { BrowserModule } from './browser/browser.module';
 import { MangaModule } from './manga/manga.module';
 import { AppConfigModule } from './config/app-config.module';
 import { Module } from '@nestjs/common';
@@ -7,6 +8,7 @@ import { AppConfigService } from './config/app-config.service';
 
 @Module({
   imports: [
+    BrowserModule,
     MangaModule,
     AppConfigModule,
     ConfigModule.forRoot({
