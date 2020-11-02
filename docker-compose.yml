@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+  postgresql:
+    build: ./docker/postgresql
+    container_name: 'manga-postgresql'
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: manga
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      manga_net:
+        ipv4_address: 172.1.2.2
+
+volumes:
+  postgres_data:
+
+networks:
+  manga_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.1.2.0/24
