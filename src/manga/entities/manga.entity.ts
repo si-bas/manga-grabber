@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { GenreEntity } from './genres.entity';
+import { GenreEntity } from './genre.entity';
 
 @Entity({
   name: 'mangas',
@@ -41,6 +41,9 @@ export class MangaEntity extends BaseEntity {
 
   @Column({ name: 'is_hentai', default: false })
   isHentai: boolean;
+
+  @Column({ name: 'raw_data', type: 'json', nullable: true })
+  rawData: any;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

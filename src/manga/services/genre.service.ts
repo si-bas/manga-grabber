@@ -3,12 +3,14 @@ import { AuthService } from 'src/browser/services/auth.service';
 import { BrowserService } from 'src/browser/services/browser.service';
 import * as cheerio from 'cheerio';
 import * as _ from 'lodash';
+import { GenreRepository } from '../repositories/genre.repository';
 
 @Injectable()
 export class GenreService {
   constructor(
     private readonly authService: AuthService,
     private readonly browserService: BrowserService,
+    private readonly genreRepository: GenreRepository,
   ) {}
 
   /**
@@ -50,6 +52,10 @@ export class GenreService {
     } finally {
       browser.close();
     }
+
+    genres.forEach(element => {
+      this.genreRepository.upsert(element);
+    });
 
     return genres;
   }
